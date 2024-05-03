@@ -4,7 +4,7 @@ type CodeElementRole =
     | Primary
     | Supporting
 
-type CodeElements =
+type CodeElement =
     { Role: CodeElementRole
       Name: string
       Type: string
