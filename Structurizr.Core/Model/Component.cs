@@ -92,7 +92,7 @@ namespace Structurizr
                 if (value != null && value.Trim().Length > 0)
                 {
                     _codeElements.RemoveWhere(ce => ce.Role == CodeElementRole.Primary);
-                    CodeElement codeElement = new CodeElement(value);
+                    CodeElement codeElement = CodeElement.ForTypeName(value) with { Role = CodeElementRole.Primary };
                     codeElement.Role = CodeElementRole.Primary;
                     _codeElements.Add(codeElement);
                 }
