@@ -1,7 +1,7 @@
 namespace Structurizr
 
-open System.Runtime.Serialization
 open System
+open System.Runtime.Serialization
 
 type CodeElementRole =
     | Primary
@@ -14,7 +14,7 @@ type Perspective =
     { Name: string
       Description: string }
 
-    interface IComparable<Perspective> with
+    interface Perspective IComparable with
         member this.CompareTo(other: Perspective) = this.Name.CompareTo(other.Name)
 
     override this.Equals(obj) =
@@ -25,11 +25,14 @@ type Perspective =
     override this.GetHashCode() = this.Name.GetHashCode()
 
 [<DataContract>]
+[<CustomEquality>]
+[<CustomComparison>]
 type CodeElement =
     { Name: string
       Type: string
       Language: string
-      Role: CodeElementRole }
+      Role: CodeElementRole
+      Url: string option }
 
     static member ForTypeName(fullyQualifiedTypeName: string) =
         let typeName =
@@ -40,12 +43,25 @@ type CodeElement =
         { Name = if dot > -1 then typeName.Substring(dot + 1) else typeName
           Type = fullyQualifiedTypeName
           Language = "C#"
-          Role = Primary }
+          Role = Primary
+          Url = None }
 
-// member this.Description: string with
-//     get()
-//     set(value) =
+    member this.WithUrl(url: string) =
+        let mutable uri = Unchecked.defaultof<Uri>
 
-// member this.Category: string with get, set
-// member Visibility: string
-// member Size: int
+        let result =
+            System.Uri.TryCreate("https://www.example.com", System.UriKind.Absolute, &uri)
+
+        let result = if result then Some url else None
+
+        { this with Url = result }
+
+    interface CodeElement IComparable with
+        member this.CompareTo(other: CodeElement) = this.Type.CompareTo(other.Type)
+
+    override this.Equals(obj) =
+        match obj with
+        | :? CodeElement as other -> this.Type = other.Type
+        | _ -> false
+
+    override this.GetHashCode() = this.Type.GetHashCode()
