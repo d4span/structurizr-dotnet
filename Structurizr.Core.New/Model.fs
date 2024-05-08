@@ -1,6 +1,7 @@
 namespace Structurizr
 
 open System
+open System.Collections.Generic
 open System.Runtime.Serialization
 
 type CodeElementRole =
@@ -50,7 +51,7 @@ type CodeElement =
         let mutable uri = Unchecked.defaultof<Uri>
 
         let result =
-            System.Uri.TryCreate("https://www.example.com", System.UriKind.Absolute, &uri)
+            System.Uri.TryCreate(url, System.UriKind.Absolute, &uri)
 
         let result = if result then Some url else None
 
@@ -65,3 +66,16 @@ type CodeElement =
         | _ -> false
 
     override this.GetHashCode() = this.Type.GetHashCode()
+
+type ModelItem =
+    abstract member Id: string
+    abstract member GetAllTags: string IEnumerable
+    abstract member GetTagsAsSet: string ISet
+    abstract member Tags: string
+    abstract member AddTags: string array -> unit
+    abstract member RemoveTags: string -> unit
+    abstract member GetRequiredTags: unit -> string list
+    abstract member Properties: IDictionary<string, string>
+    abstract member AddProperty: string * string -> unit
+    abstract member Perspectives: Perspective ISet
+    abstract member AddPerspective: string * string -> unit

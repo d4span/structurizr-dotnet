@@ -33,7 +33,7 @@ namespace Structurizr
             {
                 setOfTags.Add(tag);
             }
-
+    
             return setOfTags;
         }
 
