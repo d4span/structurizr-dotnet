@@ -68,14 +68,15 @@ type CodeElement =
     override this.GetHashCode() = this.Type.GetHashCode()
 
 type ModelItem =
-    abstract member Id: string
-    abstract member GetAllTags: string IEnumerable
-    abstract member GetTagsAsSet: string ISet
-    abstract member Tags: string
-    abstract member AddTags: string array -> unit
-    abstract member RemoveTags: string -> unit
-    abstract member GetRequiredTags: unit -> string list
-    abstract member Properties: IDictionary<string, string>
-    abstract member AddProperty: string * string -> unit
-    abstract member Perspectives: Perspective ISet
-    abstract member AddPerspective: string * string -> unit
+    abstract Id: string
+    abstract Tags: string list
+    abstract Properties: IDictionary<string, string>
+    abstract Perspectives: Perspective ISet
+    abstract GetAllTags: string IEnumerable
+    abstract GetTagsAsSet: string ISet
+    
+    abstract AddTags: string array -> unit
+    abstract RemoveTags: string -> unit
+    abstract GetRequiredTags: unit -> string list
+    abstract AddProperty: string * string -> unit
+    abstract AddPerspective: string * string -> unit
