@@ -50,8 +50,7 @@ type CodeElement =
     member this.WithUrl(url: string) =
         let mutable uri = Unchecked.defaultof<Uri>
 
-        let result =
-            System.Uri.TryCreate(url, System.UriKind.Absolute, &uri)
+        let result = System.Uri.TryCreate(url, System.UriKind.Absolute, &uri)
 
         let result = if result then Some url else None
 
@@ -67,16 +66,26 @@ type CodeElement =
 
     override this.GetHashCode() = this.Type.GetHashCode()
 
+[<AbstractClass>]
 type ModelItem =
-    abstract Id: string
-    abstract Tags: string list
-    abstract Properties: IDictionary<string, string>
-    abstract Perspectives: Perspective ISet
-    abstract GetAllTags: string IEnumerable
-    abstract GetTagsAsSet: string ISet
-    
+    abstract Id: string with get
+    abstract Tags: string list with get
+    abstract Properties: IDictionary<string, string> with get
+    abstract Perspectives: Perspective ISet with get
+
+    abstract RequiredTags: string list with get
+    abstract AllTags: string IEnumerable with get
+
+    member this.TagsAsSet() = this.Tags |> Set.ofList
+
+    member this.TagsAsString() =
+        let tags = this.RequiredTags @ this.Tags
+        
+        if tags.IsEmpty then "" else String.Join(", ", tags)
+
+    abstract member WithTags(tags: string) : ModelItem
+
     abstract AddTags: string array -> unit
     abstract RemoveTags: string -> unit
-    abstract GetRequiredTags: unit -> string list
     abstract AddProperty: string * string -> unit
     abstract AddPerspective: string * string -> unit
