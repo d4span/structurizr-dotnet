@@ -66,26 +66,33 @@ type CodeElement =
 
     override this.GetHashCode() = this.Type.GetHashCode()
 
-[<AbstractClass>]
-type ModelItem =
-    abstract Id: string with get
-    abstract Tags: string list with get
-    abstract Properties: IDictionary<string, string> with get
-    abstract Perspectives: Perspective ISet with get
+// [<DataContract>]
+// type ModelItem =
+//     abstract Id: string with get
+//     abstract Tags: string list with get
+//     abstract Properties: IDictionary<string, string> with get
+//     abstract Perspectives: Perspective ISet with get
+//     abstract RequiredTags: string list with get
+//     abstract AllTags: string IEnumerable with get
 
-    abstract RequiredTags: string list with get
-    abstract AllTags: string IEnumerable with get
+//     abstract WithTags: string list -> ModelItem
+//     abstract AddTags: string array -> ModelItem
+//     abstract RemoveTags: string -> ModelItem
+//     abstract AddProperty: string * string -> ModelItem
+//     abstract AddPerspective: string * string -> ModelItem
 
-    member this.TagsAsSet() = this.Tags |> Set.ofList
+// module ModelItem =
+//     type ModelItem with
+//         member this.TagsAsSet() = this.Tags |> Set.ofList
 
-    member this.TagsAsString() =
-        let tags = this.RequiredTags @ this.Tags
-        
-        if tags.IsEmpty then "" else String.Join(", ", tags)
+//         member this.TagsAsString() =
+//             String.Join(", ", this.RequiredTags @ this.Tags)
 
-    abstract member WithTags(tags: string) : ModelItem
+// [<DataContract>]
+// type Element =
+//     abstract Name: string with get
+//     abstract Description: string with get
+//     abstract Url: string with get
 
-    abstract AddTags: string array -> unit
-    abstract RemoveTags: string -> unit
-    abstract AddProperty: string * string -> unit
-    abstract AddPerspective: string * string -> unit
+
+//     inherit ModelItem

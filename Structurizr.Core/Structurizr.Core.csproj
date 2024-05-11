@@ -19,7 +19,4 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Structurizr.Core.New\Structurizr.Core.New.fsproj" />
-  </ItemGroup>
 </Project>

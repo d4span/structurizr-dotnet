@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Structurizr.Core\Structurizr.Core.csproj" />
+    <ProjectReference Include="..\Structurizr.Core.Tests\Structurizr.Core.Tests.csproj" />
   </ItemGroup>
 
 </Project>
