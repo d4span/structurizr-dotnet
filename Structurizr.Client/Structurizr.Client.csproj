@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Structurizr.Core\Structurizr.Core.csproj" />
+    <ProjectReference Include="..\Structurizr.Core.New\Structurizr.Core.New.fsproj" />
   </ItemGroup>
 
 </Project>
