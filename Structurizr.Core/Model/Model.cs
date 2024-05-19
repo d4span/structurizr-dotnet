@@ -1,89 +1,48 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Structurizr
 {
-
     /// <summary>
     /// A software architecture model.
     /// </summary>
     [DataContract]
-    public sealed class Model
+    public sealed record Model
     {
-
-        public IImpliedRelationshipsStrategy ImpliedRelationshipsStrategy = new DefaultImpliedRelationshipsStrategy();
+        public IImpliedRelationshipsStrategy ImpliedRelationshipsStrategy =
+            new DefaultImpliedRelationshipsStrategy();
 
         [DataMember(Name = "enterprise", EmitDefaultValue = false)]
         public Enterprise Enterprise { get; set; }
 
-        private HashSet<Person> _people;
-
         [DataMember(Name = "people", EmitDefaultValue = false)]
-        public ISet<Person> People
-        {
-            get
-            {
-                return new HashSet<Person>(_people);
-            }
-
-            internal set
-            {
-                _people = new HashSet<Person>(value);
-            }
-        }
-
-        private HashSet<SoftwareSystem> _softwareSystems;
+        public HashSet<Person> People { get; internal set; }
 
         [DataMember(Name = "softwareSystems", EmitDefaultValue = false)]
-        public ISet<SoftwareSystem> SoftwareSystems
-        {
-            get
-            {
-                return new HashSet<SoftwareSystem>(_softwareSystems);
-            }
-
-            internal set
-            {
-                _softwareSystems = new HashSet<SoftwareSystem>(value);
-            }
-        }
-
-        private HashSet<DeploymentNode> _deploymentNodes;
+        public HashSet<SoftwareSystem> SoftwareSystems { get; internal set; }
 
         [DataMember(Name = "deploymentNodes", EmitDefaultValue = false)]
-        public ISet<DeploymentNode> DeploymentNodes
-        {
-            get
-            {
-                return new HashSet<DeploymentNode>(_deploymentNodes);
-            }
+        public HashSet<DeploymentNode> DeploymentNodes { get; internal set; }
 
-            internal set
-            {
-                _deploymentNodes = new HashSet<DeploymentNode>(value);
-            }
-        }
-
-        private readonly Dictionary<string, Element> _elementsById = new Dictionary<string, Element>();
-        private readonly Dictionary<string, Relationship> _relationshipsById = new Dictionary<string, Relationship>();
+        private readonly Dictionary<string, Element> _elementsById =
+            new Dictionary<string, Element>();
+        private readonly Dictionary<string, Relationship> _relationshipsById =
+            new Dictionary<string, Relationship>();
 
         public ICollection<Relationship> Relationships
         {
-            get
-            {
-                return new List<Relationship>(_relationshipsById.Values);
-            }
+            get { return new List<Relationship>(_relationshipsById.Values); }
         }
 
         public IdGenerator IdGenerator = new SequentialIntegerIdGeneratorStrategy();
 
         internal Model()
         {
-            _people = new HashSet<Person>();
-            _softwareSystems = new HashSet<SoftwareSystem>();
-            _deploymentNodes = new HashSet<DeploymentNode>();
+            People = new HashSet<Person>();
+            SoftwareSystems = new HashSet<SoftwareSystem>();
+            DeploymentNodes = new HashSet<DeploymentNode>();
         }
 
         /// <summary>
@@ -121,12 +80,15 @@ namespace Structurizr
         {
             if (GetSoftwareSystemWithName(name) == null)
             {
-                SoftwareSystem softwareSystem = new SoftwareSystem();
-                softwareSystem.Location = location;
-                softwareSystem.Name = name;
-                softwareSystem.Description = description;
+                SoftwareSystem softwareSystem =
+                    new()
+                    {
+                        Location = location,
+                        Name = name,
+                        Description = description
+                    };
 
-                _softwareSystems.Add(softwareSystem);
+                SoftwareSystems.Add(softwareSystem);
 
                 softwareSystem.Id = IdGenerator.GenerateId(softwareSystem);
                 AddElementToInternalStructures(softwareSystem);
@@ -179,19 +141,25 @@ namespace Structurizr
                 person.Name = name;
                 person.Description = description;
 
-                _people.Add(person);
+                People.Add(person);
 
                 person.Id = IdGenerator.GenerateId(person);
                 AddElementToInternalStructures(person);
 
                 return person;
             }
-            else {
+            else
+            {
                 return null;
             }
         }
 
-        internal Container AddContainer(SoftwareSystem parent, string name, string description, string technology)
+        internal Container AddContainer(
+            SoftwareSystem parent,
+            string name,
+            string description,
+            string technology
+        )
         {
             if (parent.GetContainerWithName(name) == null)
             {
@@ -208,20 +176,33 @@ namespace Structurizr
 
                 return container;
             }
-            else {
+            else
+            {
                 return null;
             }
         }
-        
-        internal SoftwareSystemInstance AddSoftwareSystemInstance(DeploymentNode deploymentNode, SoftwareSystem softwareSystem, string deploymentGroup)
+
+        internal SoftwareSystemInstance AddSoftwareSystemInstance(
+            DeploymentNode deploymentNode,
+            SoftwareSystem softwareSystem,
+            string deploymentGroup
+        )
         {
-            if (softwareSystem == null) {
+            if (softwareSystem == null)
+            {
                 throw new ArgumentException("A software system must be specified.");
             }
 
-            long instanceNumber = deploymentNode.SoftwareSystemInstances.Count(ssi => ssi.SoftwareSystem.Equals(softwareSystem));
+            long instanceNumber = deploymentNode.SoftwareSystemInstances.Count(ssi =>
+                ssi.SoftwareSystem.Equals(softwareSystem)
+            );
             instanceNumber++;
-            SoftwareSystemInstance softwareSystemInstance = new SoftwareSystemInstance(softwareSystem, (int)instanceNumber, deploymentNode.Environment, deploymentGroup);
+            SoftwareSystemInstance softwareSystemInstance = new SoftwareSystemInstance(
+                softwareSystem,
+                (int)instanceNumber,
+                deploymentNode.Environment,
+                deploymentGroup
+            );
             softwareSystemInstance.Parent = deploymentNode;
             softwareSystemInstance.Id = IdGenerator.GenerateId(softwareSystemInstance);
 
@@ -232,15 +213,27 @@ namespace Structurizr
             return softwareSystemInstance;
         }
 
-        internal ContainerInstance AddContainerInstance(DeploymentNode deploymentNode, Container container, string deploymentGroup)
+        internal ContainerInstance AddContainerInstance(
+            DeploymentNode deploymentNode,
+            Container container,
+            string deploymentGroup
+        )
         {
-            if (container == null) {
+            if (container == null)
+            {
                 throw new ArgumentException("A container must be specified.");
             }
 
-            long instanceNumber = deploymentNode.ContainerInstances.Count(ci => ci.Container.Equals(container));
+            long instanceNumber = deploymentNode.ContainerInstances.Count(ci =>
+                ci.Container.Equals(container)
+            );
             instanceNumber++;
-            ContainerInstance containerInstance = new ContainerInstance(container, (int)instanceNumber, deploymentNode.Environment, deploymentGroup);
+            ContainerInstance containerInstance = new ContainerInstance(
+                container,
+                (int)instanceNumber,
+                deploymentNode.Environment,
+                deploymentGroup
+            );
             containerInstance.Parent = deploymentNode;
             containerInstance.Id = IdGenerator.GenerateId(containerInstance);
 
@@ -251,30 +244,55 @@ namespace Structurizr
             return containerInstance;
         }
 
-        private void ReplicateElementRelationships(StaticStructureElementInstance elementInstance) {
+        private void ReplicateElementRelationships(StaticStructureElementInstance elementInstance)
+        {
             StaticStructureElement element = elementInstance.getElement();
 
             // find all StaticStructureElementInstance objects in the same deployment environment and deployment group
-            IEnumerable<StaticStructureElementInstance> elementInstances = GetElements().OfType<StaticStructureElementInstance>().Where(ssei => ssei.Environment.Equals(elementInstance.Environment) && ssei.DeploymentGroup.Equals(elementInstance.DeploymentGroup));
+            IEnumerable<StaticStructureElementInstance> elementInstances = GetElements()
+                .OfType<StaticStructureElementInstance>()
+                .Where(ssei =>
+                    ssei.Environment.Equals(elementInstance.Environment)
+                    && ssei.DeploymentGroup.Equals(elementInstance.DeploymentGroup)
+                );
 
             // and replicate the relationships to/from the element instance
-            foreach (StaticStructureElementInstance ssei in elementInstances) {
+            foreach (StaticStructureElementInstance ssei in elementInstances)
+            {
                 StaticStructureElement sse = ssei.getElement();
 
-                foreach (Relationship relationship in element.Relationships) {
-                    if (relationship.Destination.Equals(sse)) {
-                        Relationship newRelationship = AddRelationship(elementInstance, ssei, relationship.Description, relationship.Technology, relationship.InteractionStyle);
-                        if (newRelationship != null) {
+                foreach (Relationship relationship in element.Relationships)
+                {
+                    if (relationship.Destination.Equals(sse))
+                    {
+                        Relationship newRelationship = AddRelationship(
+                            elementInstance,
+                            ssei,
+                            relationship.Description,
+                            relationship.Technology,
+                            relationship.InteractionStyle
+                        );
+                        if (newRelationship != null)
+                        {
                             newRelationship.Tags = null;
                             newRelationship.LinkedRelationshipId = relationship.Id;
                         }
                     }
                 }
 
-                foreach (Relationship relationship in sse.Relationships) {
-                    if (relationship.Destination.Equals(element)) {
-                        Relationship newRelationship = AddRelationship(ssei, elementInstance, relationship.Description, relationship.Technology, relationship.InteractionStyle);
-                        if (newRelationship != null) {
+                foreach (Relationship relationship in sse.Relationships)
+                {
+                    if (relationship.Destination.Equals(element))
+                    {
+                        Relationship newRelationship = AddRelationship(
+                            ssei,
+                            elementInstance,
+                            relationship.Description,
+                            relationship.Technology,
+                            relationship.InteractionStyle
+                        );
+                        if (newRelationship != null)
+                        {
                             newRelationship.Tags = null;
                             newRelationship.LinkedRelationshipId = relationship.Id;
                         }
@@ -282,8 +300,14 @@ namespace Structurizr
                 }
             }
         }
-    
-        internal Component AddComponent(Container parent, string name, string type, string description, string technology)
+
+        internal Component AddComponent(
+            Container parent,
+            string name,
+            string type,
+            string description,
+            string technology
+        )
         {
             if (parent.GetComponentWithName(name) == null)
             {
@@ -295,7 +319,6 @@ namespace Structurizr
                 if (type != null)
                 {
                     component.Type = type;
-
                 }
 
                 component.Parent = parent;
@@ -306,44 +329,131 @@ namespace Structurizr
 
                 return component;
             }
-             
-            throw new ArgumentException("A container named '" + name + "' already exists for this software system.");
+
+            throw new ArgumentException(
+                "A container named '" + name + "' already exists for this software system."
+            );
         }
 
-        public DeploymentNode AddDeploymentNode(string name, string description, string technology) {
-            return AddDeploymentNode(DeploymentElement.DefaultDeploymentEnvironment, name, description, technology);
+        public DeploymentNode AddDeploymentNode(string name, string description, string technology)
+        {
+            return AddDeploymentNode(
+                DeploymentElement.DefaultDeploymentEnvironment,
+                name,
+                description,
+                technology
+            );
         }
 
-        public DeploymentNode AddDeploymentNode(string name) {
-            return AddDeploymentNode(DeploymentElement.DefaultDeploymentEnvironment, name, null, null);
+        public DeploymentNode AddDeploymentNode(string name)
+        {
+            return AddDeploymentNode(
+                DeploymentElement.DefaultDeploymentEnvironment,
+                name,
+                null,
+                null
+            );
         }
 
-        public DeploymentNode AddDeploymentNode(string environment, string name, string description, string technology) {
+        public DeploymentNode AddDeploymentNode(
+            string environment,
+            string name,
+            string description,
+            string technology
+        )
+        {
             return AddDeploymentNode(environment, name, description, technology, 1);
         }
 
-        public DeploymentNode AddDeploymentNode(string name, string description, string technology, int instances) {
-            return AddDeploymentNode(DeploymentElement.DefaultDeploymentEnvironment, name, description, technology, instances);
+        public DeploymentNode AddDeploymentNode(
+            string name,
+            string description,
+            string technology,
+            int instances
+        )
+        {
+            return AddDeploymentNode(
+                DeploymentElement.DefaultDeploymentEnvironment,
+                name,
+                description,
+                technology,
+                instances
+            );
         }
 
-        public DeploymentNode AddDeploymentNode(string environment, string name, string description, string technology, int instances) {
+        public DeploymentNode AddDeploymentNode(
+            string environment,
+            string name,
+            string description,
+            string technology,
+            int instances
+        )
+        {
             return AddDeploymentNode(environment, name, description, technology, instances, null);
         }
 
-        public DeploymentNode AddDeploymentNode(string name, string description, string technology, int instances, Dictionary<string,string> properties) {
-            return AddDeploymentNode(DeploymentElement.DefaultDeploymentEnvironment, name, description, technology, instances, properties);
+        public DeploymentNode AddDeploymentNode(
+            string name,
+            string description,
+            string technology,
+            int instances,
+            Dictionary<string, string> properties
+        )
+        {
+            return AddDeploymentNode(
+                DeploymentElement.DefaultDeploymentEnvironment,
+                name,
+                description,
+                technology,
+                instances,
+                properties
+            );
         }
 
-        public DeploymentNode AddDeploymentNode(string environment, string name, string description, string technology, int instances, Dictionary<string,string> properties) {
-            return AddDeploymentNode(null, environment, name, description, technology, instances, properties);
+        public DeploymentNode AddDeploymentNode(
+            string environment,
+            string name,
+            string description,
+            string technology,
+            int instances,
+            Dictionary<string, string> properties
+        )
+        {
+            return AddDeploymentNode(
+                null,
+                environment,
+                name,
+                description,
+                technology,
+                instances,
+                properties
+            );
         }
 
-        internal DeploymentNode AddDeploymentNode(DeploymentNode parent, string environment, string name, string description, string technology, int instances, Dictionary<string,string> properties) {
-            if (name == null || name.Trim().Length == 0) {
+        internal DeploymentNode AddDeploymentNode(
+            DeploymentNode parent,
+            string environment,
+            string name,
+            string description,
+            string technology,
+            int instances,
+            Dictionary<string, string> properties
+        )
+        {
+            if (name == null || name.Trim().Length == 0)
+            {
                 throw new ArgumentException("A name must be specified.");
             }
 
-            if ((parent == null && GetDeploymentNodeWithName(name, environment) == null) || (parent != null && parent.GetDeploymentNodeWithName(name) == null && parent.GetInfrastructureNodeWithName(name) == null)) {
+            if (
+                (parent == null && GetDeploymentNodeWithName(name, environment) == null)
+                || (
+                    parent != null
+                    && parent.GetDeploymentNodeWithName(name) == null
+                    && parent.GetInfrastructureNodeWithName(name) == null
+                )
+            )
+            {
                 DeploymentNode deploymentNode = new DeploymentNode
                 {
                     Name = name,
@@ -353,30 +463,48 @@ namespace Structurizr
                     Instances = instances,
                     Environment = environment
                 };
-                
-                if (properties != null) {
+
+                if (properties != null)
+                {
                     deploymentNode.Properties = properties;
                 }
 
-                if (parent == null) {
-                    _deploymentNodes.Add(deploymentNode);
+                if (parent == null)
+                {
+                    DeploymentNodes.Add(deploymentNode);
                 }
 
                 deploymentNode.Id = IdGenerator.GenerateId(deploymentNode);
                 AddElementToInternalStructures(deploymentNode);
 
                 return deploymentNode;
-            } else {
-                throw new ArgumentException("A deployment/infrastructure node named '" + name + "' already exists.");
+            }
+            else
+            {
+                throw new ArgumentException(
+                    "A deployment/infrastructure node named '" + name + "' already exists."
+                );
             }
         }
 
-        internal InfrastructureNode AddInfrastructureNode(DeploymentNode parent, string name, string description, string technology, Dictionary<string,string> properties) {
-            if (name == null || name.Trim().Length == 0) {
+        internal InfrastructureNode AddInfrastructureNode(
+            DeploymentNode parent,
+            string name,
+            string description,
+            string technology,
+            Dictionary<string, string> properties
+        )
+        {
+            if (name == null || name.Trim().Length == 0)
+            {
                 throw new ArgumentException("A name must be specified.");
             }
 
-            if (parent.GetDeploymentNodeWithName(name) == null && parent.GetInfrastructureNodeWithName(name) == null) {
+            if (
+                parent.GetDeploymentNodeWithName(name) == null
+                && parent.GetInfrastructureNodeWithName(name) == null
+            )
+            {
                 InfrastructureNode infrastructureNode = new InfrastructureNode
                 {
                     Name = name,
@@ -385,8 +513,9 @@ namespace Structurizr
                     Parent = parent,
                     Environment = parent.Environment
                 };
-                
-                if (properties != null) {
+
+                if (properties != null)
+                {
                     infrastructureNode.Properties = properties;
                 }
 
@@ -394,8 +523,12 @@ namespace Structurizr
                 AddElementToInternalStructures(infrastructureNode);
 
                 return infrastructureNode;
-            } else {
-                throw new ArgumentException("A deployment/infrastructure node named '" + name + "' already exists.");
+            }
+            else
+            {
+                throw new ArgumentException(
+                    "A deployment/infrastructure node named '" + name + "' already exists."
+                );
             }
         }
 
@@ -407,26 +540,70 @@ namespace Structurizr
         /// <returns>the DeploymentNode instance with the specified name (or null if it doesn't exist)</returns>
         public DeploymentNode GetDeploymentNodeWithName(string name, string environment)
         {
-            return _deploymentNodes.FirstOrDefault(dn => dn.Environment.Equals(environment) && dn.Name.Equals(name));
+            return DeploymentNodes.FirstOrDefault(dn =>
+                dn.Environment.Equals(environment) && dn.Name.Equals(name)
+            );
         }
 
-        internal Relationship AddRelationship(Element source, Element destination, string description, string technology)
+        internal Relationship AddRelationship(
+            Element source,
+            Element destination,
+            string description,
+            string technology
+        )
         {
             return AddRelationship(source, destination, description, technology, null);
         }
-        
-        internal Relationship AddRelationship(Element source, Element destination, string description, string technology, InteractionStyle? interactionStyle)
+
+        internal Relationship AddRelationship(
+            Element source,
+            Element destination,
+            string description,
+            string technology,
+            InteractionStyle? interactionStyle
+        )
         {
-            return AddRelationship(source, destination, description, technology, interactionStyle, new string[0], true);
+            return AddRelationship(
+                source,
+                destination,
+                description,
+                technology,
+                interactionStyle,
+                new string[0],
+                true
+            );
         }
 
-        internal Relationship AddRelationship(Element source, Element destination, string description, string technology, InteractionStyle? interactionStyle, string[] tags)
+        internal Relationship AddRelationship(
+            Element source,
+            Element destination,
+            string description,
+            string technology,
+            InteractionStyle? interactionStyle,
+            string[] tags
+        )
         {
-            return AddRelationship(source, destination, description, technology, interactionStyle, tags, true);
+            return AddRelationship(
+                source,
+                destination,
+                description,
+                technology,
+                interactionStyle,
+                tags,
+                true
+            );
         }
 
-        internal Relationship AddRelationship(Element source, Element destination, string description, string technology, InteractionStyle? interactionStyle, string[] tags, bool createImpliedRelationships) {
-            
+        internal Relationship AddRelationship(
+            Element source,
+            Element destination,
+            string description,
+            string technology,
+            InteractionStyle? interactionStyle,
+            string[] tags,
+            bool createImpliedRelationships
+        )
+        {
             if (destination == null)
             {
                 throw new ArgumentException("The destination must be specified.");
@@ -434,20 +611,37 @@ namespace Structurizr
 
             if (IsChildOf(source, destination) || IsChildOf(destination, source))
             {
-                throw new ArgumentException("Relationships cannot be added between parents and children.");
+                throw new ArgumentException(
+                    "Relationships cannot be added between parents and children."
+                );
             }
 
-            Relationship relationship = new Relationship(source, destination, description, technology, interactionStyle, tags);
+            Relationship relationship = new Relationship(
+                source,
+                destination,
+                description,
+                technology,
+                interactionStyle,
+                tags
+            );
             if (AddRelationship(relationship))
             {
-
                 if (createImpliedRelationships)
                 {
-                    if
-                    (
-                        (source is Person || source is SoftwareSystem || source is Container || source is Component) &&
-                        (destination is Person || destination is SoftwareSystem || destination is Container || destination is Component)
+                    if (
+                        (
+                            source is Person
+                            || source is SoftwareSystem
+                            || source is Container
+                            || source is Component
                         )
+                        && (
+                            destination is Person
+                            || destination is SoftwareSystem
+                            || destination is Container
+                            || destination is Component
+                        )
+                    )
                     {
                         ImpliedRelationshipsStrategy.CreateImpliedRelationships(relationship);
                     }
@@ -461,7 +655,8 @@ namespace Structurizr
 
         private bool IsChildOf(Element e1, Element e2)
         {
-            if (e1 is Person || e2 is Person) {
+            if (e1 is Person || e2 is Person)
+            {
                 return false;
             }
 
@@ -505,14 +700,25 @@ namespace Structurizr
         /// <param name="relationship">a Relationship instance</param>
         /// <param name="description">the new description</param>
         /// <param name="technology">the new technology</param>
-        public void ModifyRelationship(Relationship relationship, String description, String technology)
+        public void ModifyRelationship(
+            Relationship relationship,
+            String description,
+            String technology
+        )
         {
             if (relationship == null)
             {
                 throw new ArgumentException("A relationship must be specified.");
             }
 
-            Relationship newRelationship = new Relationship(relationship.Source, relationship.Destination, description, technology, relationship.InteractionStyle, new string[0]);
+            Relationship newRelationship = new Relationship(
+                relationship.Source,
+                relationship.Destination,
+                description,
+                technology,
+                relationship.InteractionStyle,
+                new string[0]
+            );
             if (!relationship.Source.Has(newRelationship))
             {
                 relationship.Description = description;
@@ -530,7 +736,7 @@ namespace Structurizr
         /// <returns>A SoftwareSystem instance, or null if one doesn't exist.</returns>
         public SoftwareSystem GetSoftwareSystemWithName(string name)
         {
-            foreach (SoftwareSystem softwareSystem in _softwareSystems)
+            foreach (SoftwareSystem softwareSystem in SoftwareSystems)
             {
                 if (softwareSystem.Name == name)
                 {
@@ -543,7 +749,7 @@ namespace Structurizr
 
         public SoftwareSystem GetSoftwareSystemWithId(string id)
         {
-            foreach (SoftwareSystem softwareSystem in _softwareSystems)
+            foreach (SoftwareSystem softwareSystem in SoftwareSystems)
             {
                 if (softwareSystem.Id == id)
                 {
@@ -560,7 +766,7 @@ namespace Structurizr
         /// <returns>A Person instance, or null if one doesn't exist.</returns>
         public Person GetPersonWithName(string name)
         {
-            foreach (Person person in _people)
+            foreach (Person person in People)
             {
                 if (person.Name == name)
                 {
@@ -585,14 +791,13 @@ namespace Structurizr
 
         internal void Hydrate()
         {
-            
             // add all of the elements to the model
-            foreach (Person person in _people)
+            foreach (Person person in People)
             {
                 AddElementToInternalStructures(person);
             }
 
-            foreach (SoftwareSystem softwareSystem in _softwareSystems)
+            foreach (SoftwareSystem softwareSystem in SoftwareSystems)
             {
                 AddElementToInternalStructures(softwareSystem);
                 foreach (Container container in softwareSystem.Containers)
@@ -609,7 +814,7 @@ namespace Structurizr
                 }
             }
 
-            _deploymentNodes.ToList().ForEach(dn => HydrateDeploymentNode(dn, null));
+            DeploymentNodes.ToList().ForEach(dn => HydrateDeploymentNode(dn, null));
 
             // now hydrate the relationships
             GetElements().ToList().ForEach(HydrateRelationships);
@@ -620,7 +825,9 @@ namespace Structurizr
             deploymentNode.Parent = parent;
             AddElementToInternalStructures(deploymentNode);
 
-            deploymentNode.Children.ToList().ForEach(child => HydrateDeploymentNode(child, deploymentNode));
+            deploymentNode
+                .Children.ToList()
+                .ForEach(child => HydrateDeploymentNode(child, deploymentNode));
 
             foreach (InfrastructureNode infrastructureNode in deploymentNode.InfrastructureNodes)
             {
@@ -628,9 +835,13 @@ namespace Structurizr
                 AddElementToInternalStructures(infrastructureNode);
             }
 
-            foreach (SoftwareSystemInstance softwareSystemInstance in deploymentNode.SoftwareSystemInstances)
+            foreach (
+                SoftwareSystemInstance softwareSystemInstance in deploymentNode.SoftwareSystemInstances
+            )
             {
-                softwareSystemInstance.SoftwareSystem = (SoftwareSystem)GetElement(softwareSystemInstance.SoftwareSystemId);
+                softwareSystemInstance.SoftwareSystem = (SoftwareSystem)GetElement(
+                    softwareSystemInstance.SoftwareSystemId
+                );
                 softwareSystemInstance.Parent = deploymentNode;
                 AddElementToInternalStructures(softwareSystemInstance);
             }
@@ -642,7 +853,7 @@ namespace Structurizr
                 AddElementToInternalStructures(containerInstance);
             }
         }
-        
+
         private void HydrateRelationships(Element element)
         {
             foreach (Relationship relationship in element.Relationships)
@@ -682,7 +893,7 @@ namespace Structurizr
         {
             return _relationshipsById[id];
         }
-        
+
         /// <summary>
         /// Propagates all relationships from children to their parents. For example, if you have two components (AAA and BBB)
         /// in different software systems that have a relationship, calling this method will add the following
@@ -695,15 +906,19 @@ namespace Structurizr
 
             string descriptionKey = "D";
             string technologyKey = "T";
-            
+
             // source element -> destination element -> D/T -> possible values
-            Dictionary<Element, Dictionary<Element, Dictionary<string, HashSet<string>>>> candidateRelationships = new Dictionary<Element, Dictionary<Element, Dictionary<string, HashSet<string>>>>();
-    
+            Dictionary<
+                Element,
+                Dictionary<Element, Dictionary<string, HashSet<string>>>
+            > candidateRelationships =
+                new Dictionary<Element, Dictionary<Element, Dictionary<string, HashSet<string>>>>();
+
             foreach (Relationship relationship in Relationships)
             {
                 Element source = relationship.Source;
                 Element destination = relationship.Destination;
-    
+
                 while (source != null)
                 {
                     while (destination != null)
@@ -712,66 +927,92 @@ namespace Structurizr
                         {
                             if (propagatedRelationshipIsAllowed(source, destination))
                             {
-    
-                                if (!candidateRelationships.ContainsKey(source)) 
+                                if (!candidateRelationships.ContainsKey(source))
                                 {
-                                    candidateRelationships.Add(source, new Dictionary<Element, Dictionary<string, HashSet<string>>>());
+                                    candidateRelationships.Add(
+                                        source,
+                                        new Dictionary<
+                                            Element,
+                                            Dictionary<string, HashSet<string>>
+                                        >()
+                                    );
                                 }
-    
+
                                 if (!candidateRelationships[source].ContainsKey(destination))
                                 {
-                                    candidateRelationships[source].Add(destination, new Dictionary<string, HashSet<string>>());
-                                    candidateRelationships[source][destination].Add(descriptionKey, new HashSet<string>());
-                                    candidateRelationships[source][destination].Add(technologyKey, new HashSet<string>());
+                                    candidateRelationships[source]
+                                        .Add(
+                                            destination,
+                                            new Dictionary<string, HashSet<string>>()
+                                        );
+                                    candidateRelationships[source]
+                                        [destination]
+                                        .Add(descriptionKey, new HashSet<string>());
+                                    candidateRelationships[source]
+                                        [destination]
+                                        .Add(technologyKey, new HashSet<string>());
                                 }
-    
+
                                 if (relationship.Description != null)
                                 {
-                                    candidateRelationships[source][destination][descriptionKey].Add(relationship.Description);
+                                    candidateRelationships[source]
+                                        [destination][descriptionKey]
+                                        .Add(relationship.Description);
                                 }
-    
+
                                 if (relationship.Technology != null)
                                 {
-                                    candidateRelationships[source][destination][technologyKey].Add(relationship.Technology);
+                                    candidateRelationships[source]
+                                        [destination][technologyKey]
+                                        .Add(relationship.Technology);
                                 }
                             }
                         }
-    
+
                         destination = destination.Parent;
                     }
-    
+
                     destination = relationship.Destination;
                     source = source.Parent;
                 }
             }
-    
+
             foreach (Element source in candidateRelationships.Keys)
             {
                 foreach (Element destination in candidateRelationships[source].Keys)
                 {
-                    ISet<string> possibleDescriptions = candidateRelationships[source][destination][descriptionKey];
-                    ISet<string> possibleTechnologies = candidateRelationships[source][destination][technologyKey];
-    
+                    ISet<string> possibleDescriptions = candidateRelationships[source][destination][
+                        descriptionKey
+                    ];
+                    ISet<string> possibleTechnologies = candidateRelationships[source][destination][
+                        technologyKey
+                    ];
+
                     string description = "";
                     if (possibleDescriptions.Count == 1)
                     {
                         description = possibleDescriptions.First();
                     }
-    
+
                     string technology = "";
                     if (possibleTechnologies.Count == 1)
                     {
                         technology = possibleTechnologies.First();
                     }
-    
-                    Relationship implicitRelationship = AddRelationship(source, destination, description, technology);
+
+                    Relationship implicitRelationship = AddRelationship(
+                        source,
+                        destination,
+                        description,
+                        technology
+                    );
                     if (implicitRelationship != null)
                     {
                         implicitRelationships.Add(implicitRelationship);
                     }
                 }
             }
-    
+
             return implicitRelationships;
         }
 
@@ -784,7 +1025,5 @@ namespace Structurizr
 
             return !(IsChildOf(source, destination) || IsChildOf(destination, source));
         }
-
     }
-
 }
