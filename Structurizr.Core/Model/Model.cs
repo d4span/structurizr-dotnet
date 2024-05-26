@@ -26,10 +26,8 @@ namespace Structurizr
         [DataMember(Name = "deploymentNodes", EmitDefaultValue = false)]
         public HashSet<DeploymentNode> DeploymentNodes { get; internal set; }
 
-        private readonly Dictionary<string, Element> _elementsById =
-            new Dictionary<string, Element>();
-        private readonly Dictionary<string, Relationship> _relationshipsById =
-            new Dictionary<string, Relationship>();
+        private readonly Dictionary<string, Element> _elementsById = [];
+        private readonly Dictionary<string, Relationship> _relationshipsById = [];
 
         public ICollection<Relationship> Relationships
         {
@@ -40,9 +38,9 @@ namespace Structurizr
 
         internal Model()
         {
-            People = new HashSet<Person>();
-            SoftwareSystems = new HashSet<SoftwareSystem>();
-            DeploymentNodes = new HashSet<DeploymentNode>();
+            People = [];
+            SoftwareSystems = [];
+            DeploymentNodes = [];
         }
 
         /// <summary>
@@ -136,10 +134,13 @@ namespace Structurizr
         {
             if (GetPersonWithName(name) == null)
             {
-                Person person = new Person();
-                person.Location = location;
-                person.Name = name;
-                person.Description = description;
+                Person person =
+                    new()
+                    {
+                        Location = location,
+                        Name = name,
+                        Description = description
+                    };
 
                 People.Add(person);
 
@@ -163,12 +164,15 @@ namespace Structurizr
         {
             if (parent.GetContainerWithName(name) == null)
             {
-                Container container = new Container();
-                container.Name = name;
-                container.Description = description;
-                container.Technology = technology;
+                Container container =
+                    new()
+                    {
+                        Name = name,
+                        Description = description,
+                        Technology = technology,
 
-                container.Parent = parent;
+                        Parent = parent
+                    };
                 parent.Add(container);
 
                 container.Id = IdGenerator.GenerateId(container);
@@ -228,13 +232,11 @@ namespace Structurizr
                 ci.Container.Equals(container)
             );
             instanceNumber++;
-            ContainerInstance containerInstance = new ContainerInstance(
-                container,
-                (int)instanceNumber,
-                deploymentNode.Environment,
-                deploymentGroup
-            );
-            containerInstance.Parent = deploymentNode;
+            ContainerInstance containerInstance =
+                new(container, (int)instanceNumber, deploymentNode.Environment, deploymentGroup)
+                {
+                    Parent = deploymentNode
+                };
             containerInstance.Id = IdGenerator.GenerateId(containerInstance);
 
             ReplicateElementRelationships(containerInstance);
@@ -311,10 +313,13 @@ namespace Structurizr
         {
             if (parent.GetComponentWithName(name) == null)
             {
-                Component component = new Component();
-                component.Name = name;
-                component.Description = description;
-                component.Technology = technology;
+                Component component =
+                    new()
+                    {
+                        Name = name,
+                        Description = description,
+                        Technology = technology
+                    };
 
                 if (type != null)
                 {
