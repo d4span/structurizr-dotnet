@@ -9,5 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Structurizr.Core\Structurizr.Core.csproj" />
     <Compile Include="CanonicalNameGenerator.fs" />
+    <Compile Include="DataContracts.fs" />
   </ItemGroup>
 </Project>
