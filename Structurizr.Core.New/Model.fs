@@ -16,21 +16,36 @@ type CodeElementRole =
     | Primary
     | Supporting
 
-type Url(url: string) =
-    let _ = Uri(url)
-    member _.Url = url
+type InteractionStyle =
+    | Synchronous
+    | Asynchronous
 
-    interface IComparable<Url> with
-        member _.CompareTo(other: Url) =
-            String.Compare(url, other.Url)
+type Uri(value: string) =
+    inherit System.Uri(value)
 
-[<StructuralComparison>]
+    override this.Equals(other: obj) =
+        match other with
+        | :? Uri as other -> (this :> System.Uri).Equals(other)
+        | _ -> false
+
+    override this.GetHashCode() = (this :> System.Uri).GetHashCode()
+
+    interface IComparable with
+        member this.CompareTo(other: obj) =
+            match other with
+            | :? Uri as other -> (this :> IComparable<Uri>).CompareTo(other)
+            | _ -> invalidArg "other" "The argument must be a Uri"
+
+    interface IComparable<Uri> with
+        member this.CompareTo(other: Uri) =
+            this.ToString().CompareTo(other.ToString())
+
 type CodeElement =
     { Role: CodeElementRole
       Name: string
       Type: string
       Description: string
-      Url: Url
+      Uri: Uri
       Language: string
       Category: string
       Visibility: string
@@ -38,7 +53,10 @@ type CodeElement =
 
 type Person = { Location: Location }
 
-type Component = { Technology: string; Size: int; CodeElements: Set<CodeElement>}
+type Component =
+    { Technology: string
+      Size: int
+      CodeElements: Set<CodeElement> }
 
 type Container = { Technology: string }
 
