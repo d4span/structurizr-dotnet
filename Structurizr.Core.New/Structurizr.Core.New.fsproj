@@ -11,6 +11,6 @@
     <Compile Include="DataContracts.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Structurizr.Core\Structurizr.Core.csproj" />
+    <Compile Include="Workspace.fs" />
   </ItemGroup>
 </Project>

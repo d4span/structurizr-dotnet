@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <!-- Update this property group for every regular release -->
   <PropertyGroup>
-    <ReleaseNotes>
-    </ReleaseNotes>
+    <ReleaseNotes />
     <Version>1.1.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
@@ -19,5 +18,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Structurizr.Core.New\Structurizr.Core.New.fsproj" />
   </ItemGroup>
 </Project>

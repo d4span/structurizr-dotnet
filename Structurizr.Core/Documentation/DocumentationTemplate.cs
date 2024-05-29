@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Structurizr.Util;
+using Structurizr;
 
 namespace Structurizr.Documentation
 {
