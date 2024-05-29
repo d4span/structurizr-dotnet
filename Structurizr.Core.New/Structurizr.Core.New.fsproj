@@ -10,4 +10,7 @@
     <Compile Include="CanonicalNameGenerator.fs" />
     <Compile Include="DataContracts.fs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Structurizr.Core\Structurizr.Core.csproj" />
+  </ItemGroup>
 </Project>
