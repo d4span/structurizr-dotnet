@@ -1,6 +1,13 @@
 namespace Structurizr.Documentation
 
 open System.Runtime.Serialization
+open Structurizr
+
+type Format =
+    | Markdown
+    | AsciiDoc
+
+[<DataContract>]
 
 type Image =
     { [<DataMember(Name = "name", EmitDefaultValue = false)>]
@@ -9,6 +16,11 @@ type Image =
       Content: string
       [<DataMember(Name = "type", EmitDefaultValue = false)>]
       Type: string }
+
+type Section =
+    { Name: string
+      Format: Format
+      Content: string }
 
 [<DataContract>]
 type Documentation =
@@ -23,3 +35,7 @@ type Documentation =
 
       [<DataMember(Name = "images", EmitDefaultValue = false)>]
       Images: Set<Image> }
+
+type Documentation with
+    member this.AddSection (element: Element) (thType: string) (format: Format) (content: string) =
+        { this with Images = Set.add { Name = name; Content = content; Type = type_ } this.Images }

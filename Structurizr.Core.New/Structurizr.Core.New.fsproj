@@ -11,6 +11,7 @@
     <Compile Include="DataContracts.fs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Documentation.fs" />
     <Compile Include="Workspace.fs" />
   </ItemGroup>
 </Project>

@@ -79,9 +79,9 @@ open FSharp.Collections
 //     | InfrastructureNode
 //     | DeploymentNode
 
-// type Element =
-//     | DeploymentElement of DeploymentElement
-//     | GroupableElement of GroupableElement
+type Element =
+    | DeploymentElement // of DeploymentElement
+    | GroupableElement // of GroupableElement
 
 // type ModelItem =
 //     | Element of Element
