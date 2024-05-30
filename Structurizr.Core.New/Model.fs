@@ -7,10 +7,10 @@ open FSharp.Collections
 //     abstract Id: string
 //     abstract Tags: string list
 
-// type Location =
-//     | Unspecified
-//     | Internal
-//     | External
+type Location =
+    | Unspecified
+    | Internal
+    | External
 
 // type CodeElementRole =
 //     | Primary
@@ -51,7 +51,7 @@ open FSharp.Collections
 //       Visibility: string
 //       Size: int }
 
-// type Person = { Location: Location }
+type Person = { Location: Location }
 
 // type Component =
 //     { Technology: string
@@ -98,12 +98,13 @@ type Element =
 
 //     interface IModelItem
 
-// type Model =
-//     | Model of
-//         ImpliedRelationshipsStrategy: IImpliedRelationshipsStrategy *
-//         IdGenerator: IdGenerator *
-//         Enterprise: Enterprise option *
-//         People: Set<Person> *
-//         SoftwareSystems: Set<SoftwareSystem> *
-//         DeploymentNodes: Set<DeploymentNode> *
-//         Relationships: Relationship list
+type Model =
+    {
+      // ImpliedRelationshipsStrategy: IImpliedRelationshipsStrategy *
+      // IdGenerator: IdGenerator *
+      // Enterprise: Enterprise option *
+      People: Set<Person>
+    // SoftwareSystems: Set<SoftwareSystem> *
+    // DeploymentNodes: Set<DeploymentNode> *
+    // Relationships: Relationship list
+    }
