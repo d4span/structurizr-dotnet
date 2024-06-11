@@ -17,6 +17,8 @@ type Image =
       [<DataMember(Name = "type", EmitDefaultValue = false)>]
       Type: string }
 
+[<StructuralComparison>]
+[<StructuralEquality>]
 [<DataContract>]
 type Section =
     { Element: Element

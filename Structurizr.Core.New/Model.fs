@@ -1,6 +1,7 @@
 ﻿namespace Structurizr
 
 open System
+open System.Runtime.Serialization
 open FSharp.Collections
 
 // type IModelItem =
@@ -79,9 +80,18 @@ type Person = { Location: Location }
 //     | InfrastructureNode
 //     | DeploymentNode
 
+[<DataContract>]
+[<Interface>]
 type Element =
-    | DeploymentElement // of DeploymentElement
-    | GroupableElement // of GroupableElement
+    [<DataMember(Name = "name", EmitDefaultValue = false)>]
+    abstract Name: string with get
+
+    [<DataMember(Name = "description", EmitDefaultValue = false)>]
+    abstract Description: string with get
+
+    inherit IComparable
+//    | DeploymentElement // of DeploymentElement
+//    | GroupableElement // of GroupableElement
 
 // type ModelItem =
 //     | Element of Element
