@@ -75,9 +75,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{4FBA61
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc", "etc", "{043B24B2-2120-48D9-91B1-8BB426C1C369}"
-ProjectSection(SolutionItems) = preProject
-	appveyor.yml = appveyor.yml
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Structurizr.Core.New", "Structurizr.Core.New\Structurizr.Core.New.fsproj", "{14E32FED-5CD6-444E-AE82-518EE688B881}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -149,6 +151,18 @@ Global
 		{833AD46A-DCE2-4D83-9D74-BF67BBE4396E}.Release|x64.Build.0 = Release|Any CPU
 		{833AD46A-DCE2-4D83-9D74-BF67BBE4396E}.Release|x86.ActiveCfg = Release|Any CPU
 		{833AD46A-DCE2-4D83-9D74-BF67BBE4396E}.Release|x86.Build.0 = Release|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Debug|x64.Build.0 = Debug|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Debug|x86.Build.0 = Debug|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Release|x64.ActiveCfg = Release|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Release|x64.Build.0 = Release|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Release|x86.ActiveCfg = Release|Any CPU
+		{14E32FED-5CD6-444E-AE82-518EE688B881}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
